@@ -1,0 +1,20 @@
+{
+  "name": "loadforge",
+  "version": "0.1.0",
+  "description": "A learning-focused backend and performance engineering project.",
+  "keywords": [
+    "backend",
+    "api",
+    "performance-testing",
+    "nodejs",
+    "k6",
+    "learning"
+  ],
+  "license": "MIT",
+  "author": "Logan Diemer",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
