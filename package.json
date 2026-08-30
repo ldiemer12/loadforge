@@ -15,7 +15,17 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "check": "npm run format:check && npm run lint",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.1",
+    "globals": "^17.11.0",
+    "prettier": "3.9.6"
   }
 }
