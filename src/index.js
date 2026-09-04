@@ -2,6 +2,17 @@ import { createServer } from "node:http";
 
 const PORT = 3000;
 
+const titles = [
+  {
+    id: 1,
+    title: "The Example Movie",
+  },
+  {
+    id: 2,
+    title: "Another Example",
+  },
+];
+
 const server = createServer((request, response) => {
   console.log(`Method: ${request.method}`);
   console.log(`URL: ${request.url}`);
@@ -24,6 +35,13 @@ const server = createServer((request, response) => {
     };
 
     response.end(JSON.stringify(body));
+    return;
+  }
+
+  if (request.method === "GET" && request.url === "/titles") {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "application/json");
+    response.end(JSON.stringify(titles));
     return;
   }
 
