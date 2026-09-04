@@ -142,3 +142,72 @@ This will become important when modeling performance workloads later.
 - objects vs JSON
 - serialization vs deserialization
 - status-code families
+
+---
+
+## 2026-09-03 — Titles Resource and API Testing
+
+### Work completed
+
+- Added an in-memory collection of title objects with numeric IDs and title
+  strings.
+- Added `GET /titles` to return the complete collection as JSON.
+- Added `GET /titles/:id` to return one matching title.
+- Added validation that rejects non-positive, fractional, and non-numeric title
+  IDs with `400 Bad Request`.
+- Added a `404 Not Found` JSON response for valid IDs that do not match a title.
+- Parsed request URLs and split path segments to support a path parameter.
+- Refactored server construction into the `createAppServer()` factory function
+  in `src/app.js`.
+- Kept process startup and port 3000 configuration in `src/index.js`.
+- Added an `npm test` script using Node.js's built-in test runner.
+- Added integration tests for the title collection, an existing title, a
+  missing title, and invalid title IDs.
+
+### Concepts demonstrated
+
+#### Separating construction from startup
+
+`createAppServer()` creates and returns a server without immediately choosing a
+port. The production entry point starts that server on port 3000, while the
+test suite starts it on an operating-system-assigned port. This separation
+makes the same application behavior reusable in both environments.
+
+#### Testing through the HTTP boundary
+
+The tests use `fetch` to make real HTTP requests to the locally running test
+server. Assertions check status codes, content types, and parsed response
+bodies. These are integration tests because they exercise several application
+parts together rather than calling one routing expression in isolation.
+
+#### Controlled test setup and cleanup
+
+The `before` test hook creates the shared server fixture and waits for it to
+start. The `after` hook closes it. `async` functions, promises, and `await`
+ensure setup and cleanup finish at the required points in the test lifecycle.
+
+#### Distinguishing invalid input from a missing resource
+
+The detail route first validates the shape of the supplied ID. Invalid input
+returns `400 Bad Request`; a valid positive integer with no matching record
+returns `404 Not Found`. This distinguishes a malformed request from a resource
+that does not exist.
+
+### Debugging observations
+
+- HTTP request paths begin with `/`, so route comparisons must include the
+  leading slash.
+- Relative import paths require the correct `../` directory traversal.
+- A function must be called with `()` to obtain the server it creates.
+- A stray `}` in a template-literal URL becomes `%7D` after URL encoding and
+  changes the requested route.
+- Reading the first reported error and comparing logged URLs with intended
+  routes helps isolate failures before investigating later assertions.
+
+### Questions / Things to Reinforce
+
+- unit tests compared with integration tests
+- test isolation and shared fixtures
+- promise error handling
+- formal schema validation
+- expanding regression coverage for existing routes and HTTP methods
