@@ -36,12 +36,23 @@ adding tools for the sake of expanding the technology stack.
 - npm
 - JavaScript
 - ECMAScript Modules
+- Node.js built-in test runner (`node:test`)
+- Node.js strict assertion module (`node:assert/strict`)
 
 ## Current Application
 
 The application currently uses Node.js's built-in HTTP module.
 
-The server listens on port 3000.
+Application responsibilities are split between two modules:
+
+- `src/app.js` contains the in-memory title data, request routing, and the
+  `createAppServer()` factory function. Creating the server does not cause it
+  to listen on a network port.
+- `src/index.js` is the production entry point. It creates the application
+  server and starts it on port 3000.
+
+This separation allows tests to create and control a server without importing
+code that immediately starts listening on port 3000.
 
 Current routes include:
 
@@ -60,9 +71,49 @@ Example:
 "service": "loadforge"
 }
 
-Unknown routes return:
+### GET /titles
 
-404 Not Found
+Returns the complete in-memory title collection as JSON with a `200 OK`
+status.
+
+### GET /titles/:id
+
+Uses the final path segment as a title ID.
+
+- A positive integer matching an existing title returns that title as JSON
+  with `200 OK`.
+- A positive integer with no matching title returns
+  `{ "error": "Title not found" }` as JSON with `404 Not Found`.
+- A non-positive, fractional, or non-numeric ID returns
+  `{ "error": "Invalid title ID" }` as JSON with `400 Bad Request`.
+
+Other unmatched routes return plain text with `404 Not Found`:
+
+```text
+Not Found
+```
+
+## Current Automated Testing
+
+The project uses Node.js's built-in test runner, invoked with:
+
+```text
+npm test
+```
+
+The `test/app.test.js` integration tests use `before` and `after` hooks to
+create one application server, listen on an operating-system-assigned port,
+and close the server after the tests. Node's built-in `fetch` sends real HTTP
+requests, and strict assertions verify status codes, response headers, and
+parsed JSON bodies.
+
+Current coverage includes:
+
+- retrieving the title collection,
+- retrieving an existing title by ID,
+- requesting a title ID that does not exist,
+- rejecting a non-numeric title ID, and
+- rejecting a fractional title ID.
 
 ## Concepts Covered So Far
 
@@ -114,6 +165,12 @@ Node / JavaScript:
 - parameters
 - arguments
 - objects
+- arrays
+- factory functions
+- callbacks
+- promises
+- async/await
+- predicates
 
 HTTP:
 
@@ -133,6 +190,20 @@ HTTP:
 - JSON
 - serialization
 - health check endpoint
+- URL parsing
+- path parameters
+- input validation
+
+Testing:
+
+- automated tests
+- Node.js built-in test runner
+- integration tests
+- assertions
+- test fixtures
+- test hooks
+- ephemeral ports
+- regression protection
 
 ## Current Git Workflow
 
