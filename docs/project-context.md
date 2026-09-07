@@ -115,6 +115,27 @@ Current coverage includes:
 - rejecting a non-numeric title ID, and
 - rejecting a fractional title ID.
 
+## Current Continuous Integration
+
+GitHub Actions runs the `CI` workflow defined in `.github/workflows/ci.yml`.
+Its `validate` job runs on a fresh GitHub-hosted `ubuntu-latest` runner and:
+
+1. Checks out the repository.
+2. Sets up Node.js 24.
+3. Installs the locked dependencies with `npm ci`.
+4. Runs `npm run check` (Prettier formatting checks and ESLint lint checks).
+5. Runs `npm test`.
+
+The workflow runs when a pull request is opened, reopened, or updated, and on
+pushes to `main`. There are no path filters, so a documentation-only commit
+pushed to an open PR's branch also starts a new run. Merging into `main`
+starts another run through the push trigger. Pushing to a feature branch
+without an open PR does not trigger this workflow.
+
+CI validates changes; this workflow does not deploy the application.
+Definitions of CI, workflow, job, runner, step, trigger, ephemeral runner,
+and `npm ci` are recorded in [the glossary](glossary.md).
+
 ## Concepts Covered So Far
 
 Environment and tooling:
