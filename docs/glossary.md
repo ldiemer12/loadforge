@@ -70,6 +70,13 @@ Feature work can occur on separate branches before being merged.
 
 ---
 
+## CI (Continuous Integration)
+
+The practice of integrating changes frequently and validating them automatically.
+LoadForge uses GitHub Actions to check formatting, lint JavaScript, and run tests.
+
+---
+
 ## CLI
 
 Command-Line Interface.
@@ -124,6 +131,14 @@ See also: Serialization.
 A representation of differences between two versions of content.
 
 Git uses diffs to show added and removed lines.
+
+---
+
+## Ephemeral Runner
+
+A temporary runner used for one job and then discarded. LoadForge's
+GitHub-hosted Ubuntu runner starts fresh for each job, so the workflow must
+check out the code and install dependencies each time.
 
 ---
 
@@ -227,6 +242,13 @@ validation, serialization, and Node's HTTP server.
 
 ---
 
+## Job
+
+A group of workflow steps executed on one runner. LoadForge's job is named
+`validate`; its steps share the checked-out files and installed dependencies.
+
+---
+
 ## Listener
 
 A function registered to execute when a particular event occurs.
@@ -290,6 +312,21 @@ A unit of code that can expose functionality to other modules and consume
 functionality from them.
 
 LoadForge currently uses ECMAScript Modules.
+
+---
+
+## npm ci
+
+npm's clean-install command, intended for automated environments such as CI.
+It installs dependencies using an existing lockfile (`package-lock.json` in
+LoadForge), removes an existing `node_modules` directory first, and fails if
+the lockfile does not match `package.json` rather than updating it.
+
+It does not rewrite either package file. This helps CI use the recorded
+dependency versions. Use `npm install` when intentionally adding or updating
+dependencies; `npm ci` installs the project as recorded.
+
+Official reference: [npm ci documentation](https://docs.npmjs.com/cli/v11/commands/npm-ci/).
 
 ---
 
@@ -421,6 +458,13 @@ GET /health
 
 ---
 
+## Runner
+
+The machine and runner software that execute a job. LoadForge selects a
+GitHub-hosted Ubuntu environment with `runs-on: ubuntu-latest`.
+
+---
+
 ## Runtime
 
 Software providing the environment necessary to execute code.
@@ -469,6 +513,14 @@ console.log() commonly writes to stdout.
 
 ---
 
+## Step
+
+An individual operation within a job. In LoadForge, steps run in order:
+`uses:` invokes a reusable action, while `run:` executes a shell command,
+such as `npm test`.
+
+---
+
 ## Test Fixture
 
 The known data or environment prepared for a test so that its results are
@@ -486,6 +538,16 @@ after tests.
 
 LoadForge uses a `before` hook to start its test server and an `after` hook to
 close it.
+
+---
+
+## Trigger
+
+An event configured under a workflow's `on:` key that starts a workflow run.
+LoadForge uses `pull_request` and pushes to `main`. Updating an open PR's
+branch triggers a new run through the pull request's `synchronize` event.
+
+Official reference: [Events that trigger workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request).
 
 ---
 
@@ -509,6 +571,17 @@ Checking input against rules before accepting or processing it.
 
 The title-detail route validates that its path parameter represents a positive
 integer. Invalid values receive a `400 Bad Request` response.
+
+---
+
+## Workflow
+
+An automated process defined in a YAML configuration file under the repository's
+root `.github/workflows/` directory. LoadForge's `ci.yml` defines the `CI`
+workflow containing the `validate` job.
+
+Official reference for workflows, jobs, runners, and steps:
+[Understanding GitHub Actions](https://docs.github.com/en/actions/get-started/understand-github-actions).
 
 ---
 
