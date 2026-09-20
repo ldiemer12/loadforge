@@ -90,3 +90,64 @@ test("GET /titles/1.5 returns 400 for an invalid title ID", async () => {
     error: "Invalid title ID",
   });
 });
+
+test("POST /titles creates a new title", async () => {
+  const response = await fetch(`${baseUrl}/titles`, {
+    method: "POST",
+    header: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: "My New Movie",
+    }),
+  });
+
+  assert.equal(response.status, 201);
+
+  assert.match(response.headers.get("content-type"), /^application\/json/);
+
+  const body = await response.json();
+
+  assert.deepEqual(body, {
+    id: 3,
+    title: "My New Movie",
+  });
+});
+
+test("POST /titles returns 400 when title is empty", async () => {
+  const response = await fetch(`${baseUrl}/titles`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title: "",
+    }),
+  });
+
+  assert.equal(response.status, 400);
+
+  const body = await response.json();
+
+  assert.deepEqual(body, {
+    error: "Title is required",
+  });
+});
+
+test("POST /titles returns 400 for invalid JSON", async () => {
+  const response = await fetch(`${baseUrl}/titles`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: '{"title":',
+  });
+
+  assert.equal(response.status, 400);
+
+  const body = await response.json();
+
+  assert.deepEqual(body, {
+    error: "Invalid JSON",
+  });
+});
