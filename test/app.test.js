@@ -94,7 +94,7 @@ test("GET /titles/1.5 returns 400 for an invalid title ID", async () => {
 test("POST /titles creates a new title", async () => {
   const response = await fetch(`${baseUrl}/titles`, {
     method: "POST",
-    header: {
+    headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

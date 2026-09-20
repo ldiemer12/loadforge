@@ -50,7 +50,6 @@ export function createAppServer() {
       let body = "";
 
       request.on("data", (chunk) => {
-        console.log("Chunk received:", chunk);
         body += chunk.toString("utf8");
       });
 
