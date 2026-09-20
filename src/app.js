@@ -46,7 +46,53 @@ export function createAppServer() {
       response.end(JSON.stringify(titles));
       return;
     }
+    if (request.method === "POST" && pathname === "/titles") {
+      let body = "";
 
+      request.on("data", (chunk) => {
+        body += chunk.toString("utf8");
+      });
+
+      request.on("end", () => {
+        try {
+          const payload = JSON.parse(body);
+          if (
+            typeof payload.title !== "string" ||
+            payload.title.trim().length === 0
+          ) {
+            response.statusCode = 400;
+            response.setHeader("Content-Type", "application/json");
+            response.end(
+              JSON.stringify({
+                error: "Title is required",
+              }),
+            );
+            return;
+          }
+
+          const nextId = Math.max(...titles.map((title) => title.id), 0) + 1;
+
+          const newTitle = {
+            id: nextId,
+            title: payload.title.trim(),
+          };
+
+          titles.push(newTitle);
+          response.statusCode = 201;
+          response.setHeader("Content-Type", "application/json");
+          response.end(JSON.stringify(newTitle));
+        } catch {
+          response.statusCode = 400;
+          response.setHeader("Content-Type", "application/json");
+          response.end(
+            JSON.stringify({
+              error: "Invalid JSON",
+            }),
+          );
+        }
+      });
+      return;
+    }
     if (
       request.method === "GET" &&
       pathParts.length === 2 &&
@@ -60,6 +106,7 @@ export function createAppServer() {
         return;
       }
       const title = titles.find((item) => item.id === id);
+
       if (!title) {
         response.statusCode = 404;
         response.setHeader("Content-Type", "application/json");
