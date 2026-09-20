@@ -61,7 +61,7 @@ export function createAppServer() {
             payload.title.trim().length === 0
           ) {
             response.statusCode = 400;
-            response.setHeader("Content-type", "application/json");
+            response.setHeader("Content-Type", "application/json");
             response.end(
               JSON.stringify({
                 error: "Title is required",
